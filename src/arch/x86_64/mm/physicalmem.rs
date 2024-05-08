@@ -3,8 +3,10 @@ use core::sync::atomic::{AtomicUsize, Ordering};
 use free_list::{AllocError, FreeList, PageLayout, PageRange};
 use hermit_sync::InterruptTicketMutex;
 use multiboot::information::{MemoryType, Multiboot};
+use x86_64::structures::paging::frame::PhysFrameRange;
+use x86_64::structures::paging::PhysFrame;
 
-use crate::arch::x86_64::kernel::{get_fdt, get_limit, get_mbinfo};
+use crate::arch::x86_64::kernel::{get_fdt, get_limit, get_mbinfo, get_start, is_uefi};
 use crate::arch::x86_64::mm::paging::{BasePageSize, PageSize};
 use crate::arch::x86_64::mm::{MultibootMemory, PhysAddr, VirtAddr};
 use crate::{env, mm};
@@ -144,10 +146,30 @@ fn detect_from_uhyve() -> Result<(), ()> {
 	Ok(())
 }
 
+/// Use the free memory provided by the UEFI memory map (rewrite as soon as entire memory map is in kernel!)
+/// Right now, all memory in the Physical Address Range of HardwareInfo is guaranteed free memory
+fn detect_from_memory_map() -> Result<(), ()> {
+	if !is_uefi() {
+		return Err(());
+	}
+
+	let start = get_start();
+	let limit = get_limit();
+
+	let range = PageRange::new(start, limit).unwrap();
+	unsafe {
+		PHYSICAL_FREE_LIST.lock().deallocate(range);
+	}
+	TOTAL_MEMORY.store(limit - start, Ordering::SeqCst);
+
+	Ok(())
+}
+
 pub fn init() {
 	detect_from_fdt()
 		.or_else(|_e| detect_from_multiboot_info())
 		.or_else(|_e| detect_from_uhyve())
+		.or_else(|_e| detect_from_memory_map())
 		.unwrap();
 }
 
@@ -175,6 +197,45 @@ pub fn allocate(size: usize) -> Result<PhysAddr, AllocError> {
 			.try_into()
 			.unwrap(),
 	))
+}
+
+pub fn allocate_outside_of(
+	size: usize,
+	align: usize,
+	forbidden_range: PhysFrameRange,
+) -> Result<PhysFrame, AllocError> {
+	//general sanity checks
+	assert!(size > 0);
+	assert!(align > 0);
+	assert_eq!(
+		size % align,
+		0,
+		"Size {size:#X} is not a multiple of the given alignment {align:#X}"
+	);
+	assert_eq!(
+		align % BasePageSize::SIZE as usize,
+		0,
+		"Alignment {:#X} is not a multiple of {:#X}",
+		align,
+		BasePageSize::SIZE
+	);
+
+	let layout = PageLayout::from_size_align(size, align).unwrap();
+	let forbidden_range = PageRange::new(
+		forbidden_range.start.start_address().as_u64() as usize,
+		forbidden_range.end.start_address().as_u64() as usize + 4096,
+	)
+	.unwrap();
+
+	Ok(PhysFrame::from_start_address(x86_64::addr::PhysAddr::new(
+		PHYSICAL_FREE_LIST
+			.lock()
+			.allocate_outside_of(layout, forbidden_range)?
+			.start()
+			.try_into()
+			.unwrap(),
+	))
+	.unwrap())
 }
 
 pub fn allocate_aligned(size: usize, align: usize) -> Result<PhysAddr, AllocError> {
@@ -208,10 +269,10 @@ pub fn allocate_aligned(size: usize, align: usize) -> Result<PhysAddr, AllocErro
 /// This function must only be called from mm::deallocate!
 /// Otherwise, it may fail due to an empty node pool (POOL.maintain() is called in virtualmem::deallocate)
 pub fn deallocate(physical_address: PhysAddr, size: usize) {
-	assert!(
-		physical_address >= PhysAddr(mm::kernel_end_address().as_u64()),
-		"Physical address {physical_address:p} is not >= KERNEL_END_ADDRESS"
-	);
+	// assert!(
+	// 	physical_address >= PhysAddr(mm::kernel_end_address().as_u64()),
+	// 	"Physical address {physical_address:p} is not >= KERNEL_END_ADDRESS"
+	// );
 	assert!(size > 0);
 	assert_eq!(
 		size % BasePageSize::SIZE as usize,
