@@ -1,0 +1,392 @@
+
+OpenSBI v1.5.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : SiFive HiFive Unleashed A00
+Platform Features         : medeleg
+Platform HART Count       : 2
+Platform IPI Device       : aclint-mswi
+Platform Timer Device     : aclint-mtimer @ 1000000Hz
+Platform Console Device   : sifive_uart
+Platform HSM Device       : ---
+Platform PMU Device       : ---
+Platform Reboot Device    : gpio-restart
+Platform Shutdown Device  : ---
+Platform Suspend Device   : ---
+Platform CPPC Device      : ---
+Firmware Base             : 0x80000000
+Firmware Size             : 337 KB
+Firmware RW Offset        : 0x40000
+Firmware RW Size          : 81 KB
+Firmware Heap Offset      : 0x4b000
+Firmware Heap Size        : 37 KB (total), 2 KB (reserved), 11 KB (used), 23 KB (free)
+Firmware Scratch Size     : 4096 B (total), 416 B (used), 3680 B (free)
+Runtime SBI Version       : 2.0
+
+Domain0 Name              : root
+Domain0 Boot HART         : 1
+Domain0 HARTs             : 0*,1*
+Domain0 Region00          : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region01          : 0x0000000080040000-0x000000008005ffff M: (R,W) S/U: ()
+Domain0 Region02          : 0x0000000080000000-0x000000008003ffff M: (R,X) S/U: ()
+Domain0 Region03          : 0x000000000c000000-0x000000000fffffff M: (I,R,W) S/U: (R,W)
+Domain0 Region04          : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address      : 0x0000000080200000
+Domain0 Next Arg1         : 0x0000000082200000
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+Domain0 SysSuspend        : yes
+
+Boot HART ID              : 1
+Boot HART Domain          : root
+Boot HART Priv Version    : v1.12
+Boot HART Base ISA        : rv64imafdch
+Boot HART ISA Extensions  : sstc,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 2 bits
+Boot HART PMP Address Bits: 54
+Boot HART MHPM Info       : 16 (0x0007fff8)
+Boot HART Debug Triggers  : 2 triggers
+Boot HART MIDELEG         : 0x0000000000001666
+Boot HART MEDELEG         : 0x0000000000f0b509
+[LOADER][[32mINFO[0m] Loader: [0x80200000 - 0x80217000]
+[LOADER][[32mINFO[0m] Parsing kernel from ELF at 0x88200000..0x89b73d28 (len = 0x1973d28 B / 26688808 B)
+[LOADER][[32mINFO[0m] initrd = 0x88200000..0x89b73d28 (len =  0x1973d28)
+[LOADER][[32mINFO[0m] fdt    = 0x82200000..0x82201713 (len =     0x1713)
+[LOADER][[32mINFO[0m] Loading kernel to 0x82400000..0x82569328 (len = 0x169328 B / 1479464 B)
+[LOADER][[32mINFO[0m] TLS is at 0x8254c630..0x8254c698 (len =  0x68 B / 104 B)
+[LOADER][[32mINFO[0m] boot_info = BootInfo {
+    hardware_info: HardwareInfo {
+        phys_addr_range: 0x80000000..0xc0000000,
+        serial_port_base: None,
+        device_tree: Some(
+            0x82200000,
+        ),
+    },
+    load_info: LoadInfo {
+        kernel_image_addr_range: 0x82400000..0x82569328,
+        tls_info: Some(
+            TlsInfo {
+                start: 0x8254c630,
+                filesz: 0x20,
+                memsz: 0x68,
+                align: 0x8,
+            },
+        ),
+    },
+    platform_info: LinuxBoot,
+}
+[LOADER][[32mINFO[0m] Entering kernel at 0x82510b90, stack at 0x80217000, raw_boot_info at 0x8020e500
+[0][[32mINFO[0m] Welcome to Hermit 0.10.0
+[0][[32mINFO[0m] Kernel starts at 0x82400000
+[0][[32mINFO[0m] FDT:
+ / {
+    #address-cells = <0x2>
+    #size-cells = <0x2>
+    compatible = "sifive,hifive-unleashed-a00"
+    model = [83, 105, 70, 105, 118, 101, 32, 72, 105, 70, 105, 118, 101, 32, 85, 110, 108, 101, 97, 115, 104, 101, 100, 32, 65, 48, 48, 0]
+
+    reserved-memory {
+        #address-cells = <0x2>
+        #size-cells = <0x2>
+        ranges = []
+
+        mmode_resv1@80000000 {
+            reg = <0x80000000 0x40000>
+            no-map = []
+        };
+
+        mmode_resv0@80040000 {
+            reg = <0x80040000 0x20000>
+            no-map = []
+        };
+    };
+
+    chosen {
+        linux,initrd-end = <0x89b73d28>
+        linux,initrd-start = <0x88200000>
+        stdout-path = "/soc/serial@10010000"
+    };
+
+    aliases {
+        serial0 = "/soc/serial@10010000"
+        serial1 = "/soc/serial@10011000"
+        ethernet0 = "/soc/ethernet@10090000"
+    };
+
+    gpio-restart {
+        compatible = "gpio-restart"
+        gpios = [0, 0, 0, 7, 0, 0, 0, 10, 0, 0, 0, 1]
+    };
+
+    cpus {
+        #address-cells = <0x1>
+        #size-cells = <0x0>
+        timebase-frequency = <0xf4240>
+
+        cpu@0 {
+            device_type = "cpu"
+            reg = <0x0>
+            status = "disabled"
+            compatible = "riscv"
+            riscv,isa = "rv64imac_zicntr_zicsr_zifencei_zihpm"
+
+            interrupt-controller {
+                #interrupt-cells = <0x1>
+                interrupt-controller = []
+                compatible = "riscv,cpu-intc"
+                phandle = <0x4>
+            };
+        };
+
+        cpu@1 {
+            device_type = "cpu"
+            reg = <0x1>
+            status = "okay"
+            compatible = "riscv"
+            riscv,isa = "rv64imafdch_zicbom_zicboz_zicntr_zicsr_zifencei_zihintntl_zihintpause_zihpm_zawrs_zfa_zca_zcd_zba_zbb_zbc_zbs_sstc_svadu"
+            mmu-type = "riscv,sv48"
+
+            interrupt-controller {
+                #interrupt-cells = <0x1>
+                interrupt-controller = []
+                compatible = "riscv,cpu-intc"
+                phandle = <0x3>
+            };
+        };
+    };
+
+    memory@80000000 {
+        device_type = "memory"
+        reg = <0x80000000 0x40000000>
+    };
+
+    rtcclk {
+        #clock-cells = <0x0>
+        compatible = "fixed-clock"
+        clock-frequency = <0xf4240>
+        clock-output-names = "rtcclk"
+        phandle = <0x2>
+    };
+
+    hfclk {
+        #clock-cells = <0x0>
+        compatible = "fixed-clock"
+        clock-frequency = <0x1fca055>
+        clock-output-names = "hfclk"
+        phandle = <0x1>
+    };
+
+    soc {
+        #address-cells = <0x2>
+        #size-cells = <0x2>
+        compatible = "simple-bus"
+        ranges = []
+
+        serial@10010000 {
+            interrupts = <0x4>
+            interrupt-parent = <0x6>
+            clocks = <0x500000003>
+            reg = <0x10010000 0x1000>
+            compatible = "sifive,uart0"
+        };
+
+        serial@10011000 {
+            interrupts = <0x5>
+            interrupt-parent = <0x6>
+            clocks = <0x500000003>
+            reg = <0x10011000 0x1000>
+            compatible = "sifive,uart0"
+        };
+
+        pwm@10021000 {
+            #pwm-cells = <0x0>
+            clocks = <0x500000003>
+            interrupts = [0, 0, 0, 46, 0, 0, 0, 47, 0, 0, 0, 48, 0, 0, 0, 49]
+            interrupt-parent = <0x6>
+            reg = <0x10021000 0x1000>
+            compatible = "sifive,pwm0"
+        };
+
+        pwm@10020000 {
+            #pwm-cells = <0x0>
+            clocks = <0x500000003>
+            interrupts = [0, 0, 0, 42, 0, 0, 0, 43, 0, 0, 0, 44, 0, 0, 0, 45]
+            interrupt-parent = <0x6>
+            reg = <0x10020000 0x1000>
+            compatible = "sifive,pwm0"
+        };
+
+        ethernet@10090000 {
+            #size-cells = <0x0>
+            #address-cells = <0x1>
+            local-mac-address = [82, 84, 0, 18, 52, 86]
+            clock-names = [112, 99, 108, 107, 0, 104, 99, 108, 107, 0]
+            clocks = [0, 0, 0, 5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0, 2]
+            interrupts = <0x35>
+            interrupt-parent = <0x6>
+            phy-handle = <0x8>
+            phy-mode = "gmii"
+            reg-names = "control"
+            reg = <0x10090000 0x2000 0x100a0000 0x1000>
+            compatible = "sifive,fu540-c000-gem"
+
+            ethernet-phy@0 {
+                reg = <0x0>
+                phandle = <0x8>
+            };
+        };
+
+        spi@10040000 {
+            compatible = "sifive,spi0"
+            reg = <0x10040000 0x1000>
+            interrupt-parent = <0x6>
+            interrupts = <0x33>
+            clocks = <0x500000003>
+            #address-cells = <0x1>
+            #size-cells = <0x0>
+
+            flash@0 {
+                compatible = "jedec,spi-nor"
+                reg = <0x0>
+                spi-max-frequency = <0x2faf080>
+                m25p,fast-read = []
+                spi-tx-bus-width = <0x4>
+                spi-rx-bus-width = <0x4>
+            };
+        };
+
+        spi@10050000 {
+            compatible = "sifive,spi0"
+            reg = <0x10050000 0x1000>
+            interrupt-parent = <0x6>
+            interrupts = <0x6>
+            clocks = <0x500000003>
+            #address-cells = <0x1>
+            #size-cells = <0x0>
+
+            mmc@0 {
+                compatible = "mmc-spi-slot"
+                reg = <0x0>
+                spi-max-frequency = <0x1312d00>
+                voltage-ranges = <0xce400000ce4>
+                disable-wp = []
+            };
+        };
+
+        cache-controller@2010000 {
+            compatible = "sifive,fu540-c000-ccache"
+            cache-block-size = <0x40>
+            cache-level = <0x2>
+            cache-sets = <0x400>
+            cache-size = <0x200000>
+            cache-unified = []
+            interrupt-parent = <0x6>
+            interrupts = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3]
+            reg = <0x2010000 0x1000>
+        };
+
+        dma@3000000 {
+            compatible = "sifive,fu540-c000-pdma"
+            reg = <0x3000000 0x100000>
+            interrupt-parent = <0x6>
+            interrupts = [0, 0, 0, 23, 0, 0, 0, 24, 0, 0, 0, 25, 0, 0, 0, 26, 0, 0, 0, 27, 0, 0, 0, 28, 0, 0, 0, 29, 0, 0, 0, 30]
+            #dma-cells = <0x1>
+        };
+
+        gpio@10060000 {
+            compatible = "sifive,gpio0"
+            interrupt-parent = <0x6>
+            interrupts = [0, 0, 0, 7, 0, 0, 0, 8, 0, 0, 0, 9, 0, 0, 0, 10, 0, 0, 0, 11, 0, 0, 0, 12, 0, 0, 0, 13, 0, 0, 0, 14, 0, 0, 0, 15, 0, 0, 0, 16, 0, 0, 0, 17, 0, 0, 0, 18, 0, 0, 0, 19, 0, 0, 0, 20, 0, 0, 0, 21, 0, 0, 0, 22]
+            reg = <0x10060000 0x1000>
+            gpio-controller = []
+            #gpio-cells = <0x2>
+            interrupt-controller = []
+            #interrupt-cells = <0x2>
+            clocks = <0x500000003>
+            phandle = <0x7>
+        };
+
+        interrupt-controller@c000000 {
+            phandle = <0x6>
+            riscv,ndev = <0x35>
+            reg = <0xc000000 0x4000000>
+            interrupts-extended = [0, 0, 0, 4, 255, 255, 255, 255, 0, 0, 0, 3, 255, 255, 255, 255, 0, 0, 0, 3, 0, 0, 0, 9]
+            interrupt-controller = []
+            compatible = "sifive,plic-1.0.0\0riscv,plic0"
+            #interrupt-cells = <0x1>
+        };
+
+        clock-controller@10000000 {
+            compatible = "sifive,fu540-c000-prci"
+            reg = <0x10000000 0x1000>
+            clocks = <0x100000002>
+            #clock-cells = <0x1>
+            phandle = <0x5>
+        };
+
+        otp@10070000 {
+            compatible = "sifive,fu540-c000-otp"
+            reg = <0x10070000 0x1000>
+            fuse-count = <0x1000>
+        };
+
+        clint@2000000 {
+            interrupts-extended = [0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0, 7, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 7]
+            reg = <0x2000000 0x10000>
+            compatible = "sifive,clint0\0riscv,clint0"
+        };
+    };
+};
+
+[0][[32mINFO[0m] BSS starts at 0x82565118
+[0][[32mINFO[0m] tls_info = Some(
+    TlsInfo {
+        start: 0x8254c630,
+        filesz: 0x20,
+        memsz: 0x68,
+        align: 0x8,
+    },
+)
+[0][[32mINFO[0m] Model: sifive,hifive-unleashed-a00
+[0][[32mINFO[0m] Total memory size: 1024 MiB
+[0][[32mINFO[0m] Kernel region: 0x82400000..0x82600000
+[0][[32mINFO[0m] Minimum memory size: 44
+[0][[32mINFO[0m] Heap: size 880 MB, start address 0xc0000000
+[0][[32mINFO[0m] Heap is located at 0xc0000000..0xf7000000 (0 Bytes unmapped)
+[0][[32mINFO[0m] Physical memory free list:
+        0x82801000..        0x82a00000 (len =           0x1ff000, pages =              511)
+        0xb9800000..        0xc0000000 (len =          0x6800000, pages =            26624)
+[0][[32mINFO[0m] Virtual memory free list:
+        0xf7000000..      0x4000000000 (len =       0x3f09000000, pages =         66097152)
+[0][[32mINFO[0m] bootargs = 
+[src/arch/riscv64/kernel/interrupts.rs:32] "install" = "install"
+[0][[32mINFO[0m] Initialized CPU with hart_id 1
+[src/arch/riscv64/kernel/interrupts.rs:51] "enable" = "enable"
+[0][[32mINFO[0m] Starting CPU 1 with hart_id 0
+[0][[32mINFO[0m] Compiled with PCI support
+[0][[32mINFO[0m] Compiled with ACPI support
+[0][[32mINFO[0m] 
+[0][[32mINFO[0m] ======================== PCI BUS INFORMATION =========================
+[0][[32mINFO[0m] ======================================================================
+[0][[32mINFO[0m] 
+[src/arch/riscv64/kernel/interrupts.rs:122] "disable" = "disable"
+[src/arch/riscv64/kernel/interrupts.rs:51] "enable" = "enable"
+[0][[32mINFO[0m] Hermit is running on common system!
+[src/arch/riscv64/kernel/interrupts.rs:43] "init_plic" = "init_plic"
+[src/arch/riscv64/kernel/interrupts.rs:128] "install_handlers" = "install_handlers"
+[src/arch/riscv64/kernel/interrupts.rs:130] "install_handlers 2" = "install_handlers 2"
+[0][[32mINFO[0m] Try to initialize uhyve filesystem
+[0][[32mINFO[0m] Jumping into application
+[0][[33mWARN[0m] Unable to read entropy! Fallback to a naive implementation!
+Hello, world!
+[src/arch/riscv64/kernel/interrupts.rs:256] "print_statistics" = "print_statistics"
+exit status 0
+[0][[32mINFO[0m] Shutting down system

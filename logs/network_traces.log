@@ -1,0 +1,373 @@
+
+OpenSBI v1.5.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : riscv-virtio,qemu
+Platform Features         : medeleg
+Platform HART Count       : 1
+Platform IPI Device       : aclint-mswi
+Platform Timer Device     : aclint-mtimer @ 10000000Hz
+Platform Console Device   : uart8250
+Platform HSM Device       : ---
+Platform PMU Device       : ---
+Platform Reboot Device    : syscon-reboot
+Platform Shutdown Device  : syscon-poweroff
+Platform Suspend Device   : ---
+Platform CPPC Device      : ---
+Firmware Base             : 0x80000000
+Firmware Size             : 327 KB
+Firmware RW Offset        : 0x40000
+Firmware RW Size          : 71 KB
+Firmware Heap Offset      : 0x49000
+Firmware Heap Size        : 35 KB (total), 2 KB (reserved), 11 KB (used), 21 KB (free)
+Firmware Scratch Size     : 4096 B (total), 416 B (used), 3680 B (free)
+Runtime SBI Version       : 2.0
+
+Domain0 Name              : root
+Domain0 Boot HART         : 0
+Domain0 HARTs             : 0*
+Domain0 Region00          : 0x0000000000100000-0x0000000000100fff M: (I,R,W) S/U: (R,W)
+Domain0 Region01          : 0x0000000010000000-0x0000000010000fff M: (I,R,W) S/U: (R,W)
+Domain0 Region02          : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region03          : 0x0000000080040000-0x000000008005ffff M: (R,W) S/U: ()
+Domain0 Region04          : 0x0000000080000000-0x000000008003ffff M: (R,X) S/U: ()
+Domain0 Region05          : 0x000000000c400000-0x000000000c5fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region06          : 0x000000000c000000-0x000000000c3fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region07          : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address      : 0x0000000080200000
+Domain0 Next Arg1         : 0x0000000082200000
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+Domain0 SysSuspend        : yes
+
+Boot HART ID              : 0
+Boot HART Domain          : root
+Boot HART Priv Version    : v1.12
+Boot HART Base ISA        : rv64imafdch
+Boot HART ISA Extensions  : sstc,zicntr,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 2 bits
+Boot HART PMP Address Bits: 54
+Boot HART MHPM Info       : 16 (0x0007fff8)
+Boot HART Debug Triggers  : 2 triggers
+Boot HART MIDELEG         : 0x0000000000001666
+Boot HART MEDELEG         : 0x0000000000f0b509
+[LOADER][[32mINFO[0m] Loader: [0x80200000 - 0x80217000]
+[LOADER][[32mINFO[0m] Parsing kernel from ELF at 0x88200000..0x8ab01e18 (len = 0x2901e18 B / 42999320 B)
+[LOADER][[32mINFO[0m] initrd = 0x88200000..0x8ab01e18 (len =  0x2901e18)
+[LOADER][[32mINFO[0m] fdt    = 0x82200000..0x8220155a (len =     0x155a)
+[LOADER][[32mINFO[0m] Loading kernel to 0x82400000..0x8267a4f8 (len = 0x27a4f8 B / 2598136 B)
+[LOADER][[32mINFO[0m] TLS is at 0x8264a848..0x8264a8d8 (len =  0x90 B / 144 B)
+[LOADER][[32mINFO[0m] boot_info = BootInfo {
+    hardware_info: HardwareInfo {
+        phys_addr_range: 0x80000000..0xc0000000,
+        serial_port_base: None,
+        device_tree: Some(
+            0x82200000,
+        ),
+    },
+    load_info: LoadInfo {
+        kernel_image_addr_range: 0x82400000..0x8267a4f8,
+        tls_info: Some(
+            TlsInfo {
+                start: 0x8264a848,
+                filesz: 0x20,
+                memsz: 0x90,
+                align: 0x8,
+            },
+        ),
+    },
+    platform_info: LinuxBoot,
+}
+[LOADER][[32mINFO[0m] Entering kernel at 0x824bd35c, stack at 0x80217000, raw_boot_info at 0x8020e500
+[0][[32mINFO[0m] Welcome to Hermit 0.10.0
+[0][[32mINFO[0m] Kernel starts at 0x82400000
+[0][[32mINFO[0m] FDT:
+ / {
+    #address-cells = <0x2>
+    #size-cells = <0x2>
+    compatible = "riscv-virtio"
+    model = "riscv-virtio,qemu"
+
+    reserved-memory {
+        #address-cells = <0x2>
+        #size-cells = <0x2>
+        ranges = []
+
+        mmode_resv1@80000000 {
+            reg = <0x80000000 0x40000>
+            no-map = []
+        };
+
+        mmode_resv0@80040000 {
+            reg = <0x80040000 0x20000>
+            no-map = []
+        };
+    };
+
+    poweroff {
+        value = <0x5555>
+        offset = <0x0>
+        regmap = <0x4>
+        compatible = "syscon-poweroff"
+    };
+
+    reboot {
+        value = <0x7777>
+        offset = <0x0>
+        regmap = <0x4>
+        compatible = "syscon-reboot"
+    };
+
+    platform-bus@4000000 {
+        interrupt-parent = <0x3>
+        ranges = [0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0]
+        #address-cells = <0x1>
+        #size-cells = <0x1>
+        compatible = "qemu,platform\0simple-bus"
+    };
+
+    memory@80000000 {
+        device_type = "memory"
+        reg = <0x80000000 0x40000000>
+    };
+
+    cpus {
+        #address-cells = <0x1>
+        #size-cells = <0x0>
+        timebase-frequency = <0x989680>
+
+        cpu@0 {
+            phandle = <0x1>
+            device_type = "cpu"
+            reg = <0x0>
+            status = "okay"
+            compatible = "riscv"
+            riscv,cboz-block-size = <0x40>
+            riscv,cbom-block-size = <0x40>
+            riscv,isa = "rv64imafdch_zicbom_zicboz_zicntr_zicsr_zifencei_zihintntl_zihintpause_zihpm_zawrs_zfa_zca_zcd_zba_zbb_zbc_zbs_sstc_svadu"
+            mmu-type = "riscv,sv57"
+
+            interrupt-controller {
+                #interrupt-cells = <0x1>
+                interrupt-controller = []
+                compatible = "riscv,cpu-intc"
+                phandle = <0x2>
+            };
+        };
+
+        cpu-map {
+            cluster0 {
+                core0 {
+                    cpu = <0x1>
+                };
+            };
+        };
+    };
+
+    pmu {
+        compatible = "riscv,pmu"
+    };
+
+    fw-cfg@10100000 {
+        dma-coherent = []
+        reg = <0x10100000 0x18>
+        compatible = "qemu,fw-cfg-mmio"
+    };
+
+    flash@20000000 {
+        bank-width = <0x4>
+        reg = <0x20000000 0x2000000 0x22000000 0x2000000>
+        compatible = "cfi-flash"
+    };
+
+    chosen {
+        linux,initrd-end = <0x8ab01e18>
+        linux,initrd-start = <0x88200000>
+        stdout-path = "/soc/serial@10000000"
+        rng-seed = [84, 52, 39, 192, 15, 44, 237, 230, 48, 155, 55, 142, 129, 69, 197, 206, 92, 118, 23, 10, 183, 109, 61, 16, 34, 26, 207, 19, 215, 188, 0, 118]
+    };
+
+    soc {
+        #address-cells = <0x2>
+        #size-cells = <0x2>
+        compatible = "simple-bus"
+        ranges = []
+
+        rtc@101000 {
+            interrupts = <0xb>
+            interrupt-parent = <0x3>
+            reg = <0x101000 0x1000>
+            compatible = "google,goldfish-rtc"
+        };
+
+        serial@10000000 {
+            interrupts = <0xa>
+            interrupt-parent = <0x3>
+            clock-frequency = <0x384000>
+            reg = <0x10000000 0x100>
+            compatible = "ns16550a"
+        };
+
+        test@100000 {
+            phandle = <0x4>
+            reg = <0x100000 0x1000>
+            compatible = "sifive,test1\0sifive,test0\0syscon"
+        };
+
+        pci@30000000 {
+            interrupt-map-mask = [0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7]
+            interrupt-map = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 35, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 33, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 34, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 35, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 34, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 35, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 33, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 35, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 32, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 33, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 34]
+            ranges = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0]
+            reg = <0x30000000 0x10000000>
+            dma-coherent = []
+            bus-range = <0xff>
+            linux,pci-domain = <0x0>
+            device_type = "pci"
+            compatible = "pci-host-ecam-generic"
+            #size-cells = <0x2>
+            #interrupt-cells = <0x1>
+            #address-cells = <0x3>
+        };
+
+        virtio_mmio@10008000 {
+            interrupts = <0x8>
+            interrupt-parent = <0x3>
+            reg = <0x10008000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10007000 {
+            interrupts = <0x7>
+            interrupt-parent = <0x3>
+            reg = <0x10007000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10006000 {
+            interrupts = <0x6>
+            interrupt-parent = <0x3>
+            reg = <0x10006000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10005000 {
+            interrupts = <0x5>
+            interrupt-parent = <0x3>
+            reg = <0x10005000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10004000 {
+            interrupts = <0x4>
+            interrupt-parent = <0x3>
+            reg = <0x10004000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10003000 {
+            interrupts = <0x3>
+            interrupt-parent = <0x3>
+            reg = <0x10003000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10002000 {
+            interrupts = <0x2>
+            interrupt-parent = <0x3>
+            reg = <0x10002000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        virtio_mmio@10001000 {
+            interrupts = <0x1>
+            interrupt-parent = <0x3>
+            reg = <0x10001000 0x1000>
+            compatible = "virtio,mmio"
+        };
+
+        plic@c000000 {
+            phandle = <0x3>
+            riscv,ndev = <0x5f>
+            reg = <0xc000000 0x600000>
+            interrupts-extended = [0, 0, 0, 2, 255, 255, 255, 255, 0, 0, 0, 2, 0, 0, 0, 9]
+            interrupt-controller = []
+            compatible = "sifive,plic-1.0.0\0riscv,plic0"
+            #address-cells = <0x0>
+            #interrupt-cells = <0x1>
+        };
+
+        clint@2000000 {
+            interrupts-extended = [0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 7]
+            reg = <0x2000000 0x10000>
+            compatible = "sifive,clint0\0riscv,clint0"
+        };
+    };
+};
+
+[0][[32mINFO[0m] BSS starts at 0x82676060
+[0][[32mINFO[0m] tls_info = Some(
+    TlsInfo {
+        start: 0x8264a848,
+        filesz: 0x20,
+        memsz: 0x90,
+        align: 0x8,
+    },
+)
+[0][[32mINFO[0m] Model: riscv-virtio
+[0][[32mINFO[0m] Total memory size: 1024 MiB
+[0][[32mINFO[0m] Kernel region: 0x82400000..0x82800000
+[0][[32mINFO[0m] Minimum memory size: 46
+[0][[32mINFO[0m] Heap: size 878 MB, start address 0xc0000000
+[0][[32mINFO[0m] Heap is located at 0xc0000000..0xf6e00000 (0 Bytes unmapped)
+[0][[32mINFO[0m] Physical memory free list:
+        0x82a01000..        0x82c00000 (len =           0x1ff000, pages =              511)
+        0xb9800000..        0xc0000000 (len =          0x6800000, pages =            26624)
+[0][[32mINFO[0m] Virtual memory free list:
+        0xf6e00000..      0x4000000000 (len =       0x3f09200000, pages =         66097664)
+[0][[32mINFO[0m] bootargs = 
+[0][[32mINFO[0m] Initialized CPU with hart_id 0
+[0][[32mINFO[0m] All processors are initialized
+[0][[32mINFO[0m] Hermit is running on common system!
+[0][[32mINFO[0m] Found network card at 0x10008000
+[0][[32mINFO[0m] Feature set wanted by network driver are in conformance with specification.
+[0][[32mINFO[0m] Feature set wanted by network driver are in conformance with specification.
+[0][[32mINFO[0m] Driver found a subset of features for virtio device 0. Features are: F(MAC | MRG_RXBUF | STATUS | MQ | INDIRECT_DESC | VERSION_1 | RING_PACKED)
+[0][[32mINFO[0m] Features have been negotiated between virtio network device 0 and driver.
+[0][[32mINFO[0m] Created PackedVq: idx=0, size=1024
+[0][[32mINFO[0m] Created PackedVq: idx=1, size=1024
+[0][[32mINFO[0m] Network driver successfully initialized virtqueues.
+[0][[32mINFO[0m] Device specific initialization for Virtio network device 0 finished
+[0][[32mINFO[0m] 
+[0][[32mINFO[0m] ================== MMIO REGISTER LAYOUT INFORMATION ==================
+[0][[32mINFO[0m] Device version:          0x2
+[0][[32mINFO[0m] Device ID:               Net
+[0][[32mINFO[0m] Vendor ID:               0x554D4551
+[0][[32mINFO[0m] Device Features:         0x10530FF8024
+[0][[32mINFO[0m] Interrupt status:        0x0
+[0][[32mINFO[0m] Device status:           0xF
+[0][[32mINFO[0m] ======================================================================
+[0][[32mINFO[0m] 
+[0][[32mINFO[0m] The link of the network device is up!
+[0][[32mINFO[0m] Virtio network driver initialized.
+[0][[32mINFO[0m] Virtio interrupt handler at line 8
+[0][[32mINFO[0m] Try to initialize network!
+[0][[32mINFO[0m] MAC address 52-54-00-12-34-56
+[0][[32mINFO[0m] ChecksumCapabilities { ipv4: Both, udp: Both, tcp: Both, icmpv4: Both, icmpv6: Both }
+[0][[32mINFO[0m] MTU: 1514 bytes
+[0][[32mINFO[0m] DHCP lost config!
+[0][[32mINFO[0m] DHCP config acquired!
+[0][[32mINFO[0m] IP address:      192.168.76.9/24
+[0][[32mINFO[0m] Default gateway: 192.168.76.2
+[0][[32mINFO[0m] DNS server 0:    192.168.76.3
+[0][[32mINFO[0m] Try to initialize uhyve filesystem
+[0][[32mINFO[0m] Jumping into application
+[0][[33mWARN[0m] Unable to read entropy! Fallback to a naive implementation!
+Now listening on port 9975
